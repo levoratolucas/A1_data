@@ -23,7 +23,21 @@ df['nps'] = df['nota'].apply(lambda x: 'detrator' if x < 6 else ('neutro' if x <
 # _____________________________________________________________________________________________________
 
 
+# _______________________________________ tarefa 5 ____________________________________________________
+regioes = {
+    'PR': 'Sul', 'SC': 'Sul', 'RS': 'Sul',
+    'SP': 'Sudeste', 'RJ': 'Sudeste', 'MG': 'Sudeste', 'ES': 'Sudeste',
+    'DF': 'Centro-Oeste', 'GO': 'Centro-Oeste', 'MT': 'Centro-Oeste', 'MS': 'Centro-Oeste',
+    'AM': 'Norte', 'RR': 'Norte', 'AP': 'Norte', 'PA': 'Norte', 'TO': 'Norte', 'RO': 'Norte', 'AC': 'Norte',
+    'BA': 'Nordeste', 'PE': 'Nordeste', 'CE': 'Nordeste', 'RN': 'Nordeste', 'PB': 'Nordeste',
+    'SE': 'Nordeste', 'AL': 'Nordeste', 'PI': 'Nordeste', 'MA': 'Nordeste'
+}
 
+df['região'] = df['estado'].map(regioes).fillna('Outro')
+
+# Exibir os dados atualizados
+# print(df[['estado', 'região']])
+# _____________________________________________________________________________________________________
 
 # _______________________________________ tarefa 2 e 3 ________________________________________________
 dfBrasil = df[(df['mercado'] == 'BRASIL') & (df['Grupo de Produto'] == 'Grupo 4')]
@@ -46,21 +60,7 @@ print('porcentagem')
 print(porcentagem)
 # _____________________________________________________________________________________________________
 
-# _______________________________________ tarefa 5 ____________________________________________________
-regioes = {
-    'PR': 'Sul', 'SC': 'Sul', 'RS': 'Sul',
-    'SP': 'Sudeste', 'RJ': 'Sudeste', 'MG': 'Sudeste', 'ES': 'Sudeste',
-    'DF': 'Centro-Oeste', 'GO': 'Centro-Oeste', 'MT': 'Centro-Oeste', 'MS': 'Centro-Oeste',
-    'AM': 'Norte', 'RR': 'Norte', 'AP': 'Norte', 'PA': 'Norte', 'TO': 'Norte', 'RO': 'Norte', 'AC': 'Norte',
-    'BA': 'Nordeste', 'PE': 'Nordeste', 'CE': 'Nordeste', 'RN': 'Nordeste', 'PB': 'Nordeste',
-    'SE': 'Nordeste', 'AL': 'Nordeste', 'PI': 'Nordeste', 'MA': 'Nordeste'
-}
 
-df['região'] = df['estado'].map(regioes).fillna('Outro')
-
-# Exibir os dados atualizados
-# print(df[['estado', 'região']])
-# _____________________________________________________________________________________________________
 
 
 # _________________________________________ tarefa 7 __________________________________________________
