@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 # grupos até 10
-grupos = ['Grupo 1', 'Grupo 2', 'Grupo 3', 'Grupo 4', 'Grupo 5', 'Grupo 6', 'Grupo 7', 'Grupo 8','Grupo 9_10' ,'Grupo 11', ]
+grupos = ['Grupo 1']
 
 # exwcutar o cod grupo por grupo
 for grupo in grupos:
@@ -442,33 +442,94 @@ for grupo in grupos:
 
     print(f"\nMétricas para a região: {regiao}")
         
-        # Detratores
+    import shap
+    import matplotlib.pyplot as plt
+    from sklearn.inspection import PartialDependenceDisplay
+    import os
+
+# Função para salvar as imagens
+    def salvar_imagem(figura, nome_arquivo):
+        diretorio = "diretorio"  # Substitua pelo caminho desejado no seu computador
+        if not os.path.exists(diretorio):
+            os.makedirs(diretorio)
+        plt.figure(figsize=(12, 8))  # Ajuste os valores conforme necessário para a sua situação
+
+        figura.savefig(os.path.join(diretorio, nome_arquivo), dpi=300)
+        plt.clf()
+        
+
+# Loop por todas as regiões e todos os modelos
+    
+    print(f"\nGerando gráficos para a região: {regiao}_{grupo}")
+
+    # Detratores
     model_detrator_XGB = modelos_detrator_XGB[regiao]
     model_detrator_Random = modelos_detrator_Random[regiao]
-    print("\nDetratores (XGBoost):")
-    # calcular_metricas_e_roc(model_detrator_XGB, X_test, y_test, f"Detratores - {regiao} (XGBoost)")
-    print("\nDetratores (Random Forest):")
-    # calcular_metricas_e_roc(model_detrator_Random, X_test, y_test, f"Detratores - {regiao} (Random Forest)")
 
     # Neutros
     model_neutro_XGB = modelos_neutro_XGB[regiao]
     model_neutro_Random = modelos_neutro_Random[regiao]
-    print("\nNeutros (XGBoost):")
-    # calcular_metricas_e_roc(model_neutro_XGB, X_test, y_test, f"Neutros - {regiao} (XGBoost)")
-    print("\nNeutros (Random Forest):")
-    # calcular_metricas_e_roc(model_neutro_Random, X_test, y_test, f"Neutros - {regiao} (Random Forest)")
 
     # Promotores
     model_promotor_XGB = modelos_promotor_XGB[regiao]
     model_promotor_Random = modelos_promotor_Random[regiao]
-    print("\nPromotores (XGBoost):")
-    # calcular_metricas_e_roc(model_promotor_XGB, X_test, y_test, f"Promotores - {regiao} (XGBoost)")
-    print("\nPromotores (Random Forest):")
-    # calcular_metricas_e_roc(model_promotor_Random, X_test, y_test, f"Promotores - {regiao} (Random Forest)")
+
+    # Gerando gráficos para Detratores com XGBoost
+    explainer = shap.Explainer(model_detrator_XGB)
+    shap_values = explainer(X_test)
+    
+    # Gráfico SHAP
+    shap_summary_plot = shap.summary_plot(shap_values, X_test, show=False)  # 'show=False' impede que o gráfico apareça imediatamente
+    salvar_imagem(plt, f"shap_detratores_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    # Gráfico de Dependência Parcial
+    features = [0, 1, 2, 3]  # Substitua pelos índices das features que você quer visualizar
+    display = PartialDependenceDisplay.from_estimator(
+        model_detrator_XGB,
+        X_test,
+        features=features,
+        kind="both"
+    )
+    salvar_imagem(plt, f"partial_dependence_detratores_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    # Gerando gráficos para Neutros com XGBoost
+    explainer = shap.Explainer(model_neutro_XGB)
+    shap_values = explainer(X_test)
+    
+    # Gráfico SHAP
+    shap_summary_plot = shap.summary_plot(shap_values, X_test, show=False)  # 'show=False' impede que o gráfico apareça imediatamente
+    salvar_imagem(plt, f"shap_neutros_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    # Gráfico de Dependência Parcial
+    display = PartialDependenceDisplay.from_estimator(
+        model_neutro_XGB,
+        X_test,
+        features=features,
+        kind="both"
+    )
+    salvar_imagem(plt, f"partial_dependence_neutros_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    # Gerando gráficos para Promotores com XGBoost
+    explainer = shap.Explainer(model_promotor_XGB)
+    shap_values = explainer(X_test)
+    
+    # Gráfico SHAP
+    shap_summary_plot = shap.summary_plot(shap_values, X_test, show=False)  # 'show=False' impede que o gráfico apareça imediatamente
+    salvar_imagem(plt, f"shap_promotores_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    # Gráfico de Dependência Parcial
+    display = PartialDependenceDisplay.from_estimator(
+        model_promotor_XGB,
+        X_test,
+        features=features,
+        kind="both"
+    )
+    salvar_imagem(plt, f"partial_dependence_promotores_XGB_{grupo}{regiao}.png")  # Salvando a imagem
+
+    print(f"Gráficos salvos para a região: {grupo}{regiao}")
+  
 
 
-
-    import pandas as pd
 
     # Função para extrair as top 10 variáveis de um modelo e adicionar o nome do modelo
     def extrair_top_10_importancias(modelo, colunas, nome_modelo):
